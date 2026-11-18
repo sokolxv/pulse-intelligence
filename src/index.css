@@ -1,0 +1,840 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #0A0A0C;
+}
+
+/* Ambient warmth behind the whole app — deep obsidian with champagne bloom */
+#root {
+  background:
+    radial-gradient(1100px 480px at 72% -8%, rgba(245, 245, 247, 0.06), transparent 62%),
+    radial-gradient(820px 520px at 8% 108%, rgba(245, 245, 247, 0.038), transparent 60%),
+    radial-gradient(600px 380px at 50% 50%, rgba(245, 245, 247, 0.012), transparent 70%),
+    #0A0A0C;
+}
+
+/* Physical press feedback on chrome buttons */
+aside nav button,
+.tabbar-fade button {
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease;
+}
+
+aside nav button:active,
+.tabbar-fade button:active {
+  transform: scale(0.93);
+}
+
+/* Вкладки: мягкий подъём при наведении (только transform — без дёргания лейаута) */
+.tabbar-fade button:hover {
+  transform: translateY(-1px);
+}
+
+/* Появление попапов: пружинный scale + fade + сдвиг 5px */
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.95) translateY(5px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.pop-in {
+  animation: pop-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Visible keyboard focus */
+:focus-visible {
+  outline: 2px solid rgba(245, 245, 247, 0.6);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Tabular numbers for clocks/counters */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Staggered entrance */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rise-in {
+  animation: rise-in 0.32s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3A352D;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4A4438;
+}
+
+/* Drag region for Electron title bar */
+.drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Glow effect on hover - warm gold */
+.glow-hover {
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-hover:hover {
+  box-shadow: 0 0 22px rgba(245, 245, 247, 0.2);
+}
+
+/* Scan line overlay - champagne gold */
+.scan-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #F5F5F7, transparent);
+  animation: scan 3s linear infinite;
+  opacity: 0.2;
+}
+
+/* Status indicator pulse */
+@keyframes status-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+.status-dot {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+/* Liquid glass — iOS-style: blurred saturated base + top specular light + edge glow.
+   Применяется ко всем попапам/панелям через существующий класс .glass (позиции и размеры не трогает) */
+.glass {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(244, 244, 246, 0.075) 0%, rgba(244, 244, 246, 0.015) 18%, transparent 38%),
+    linear-gradient(0deg, rgba(245, 245, 247, 0.05) 0%, transparent 26%),
+    rgba(23, 21, 18, 0.72);
+  backdrop-filter: blur(24px) saturate(1.5) brightness(1.06);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5) brightness(1.06);
+  border: 1px solid rgba(244, 244, 246, 0.1);
+  border-top-color: rgba(244, 244, 246, 0.17);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(244, 244, 246, 0.14) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.3) inset;
+}
+
+/* Спекулярный блик сверху — только там, где псевдоэлементы поддерживаются (на input молча игнорируется) */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 252, 244, 0.06) 0%, transparent 22%);
+}
+
+/* Liquid-полосы хрома: блик поверх существующего фона (background-color не перезаписывает) */
+.liquid-bar {
+  background-image: linear-gradient(180deg, rgba(244, 244, 246, 0.045) 0%, transparent 55%);
+  box-shadow: 0 1px 0 rgba(244, 244, 246, 0.05) inset, 0 -1px 0 rgba(0, 0, 0, 0.35) inset;
+}
+
+/* Film grain — chrome panels only (never on body/webview) */
+.chrome-grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.chrome-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+/* ---- Premium buttons: bg shift + active scale (focus-visible handled globally) ---- */
+.btn-gold {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F5F7 100%);
+  color: #1A1611;
+  border: 1px solid rgba(245, 245, 247, 0.6);
+  box-shadow: 0 1px 0 rgba(244, 244, 246, 0.35) inset, 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.15s ease, filter 0.15s ease, transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+.btn-gold:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 1px 0 rgba(244, 244, 246, 0.4) inset, 0 4px 18px rgba(245, 245, 247, 0.22);
+}
+
+.btn-gold:active {
+  transform: scale(0.97);
+  filter: brightness(0.96);
+}
+
+.btn-ghost {
+  background: rgba(34, 31, 27, 0.6);
+  color: #EDEDF2;
+  border: 1px solid #272420;
+  box-shadow: 0 1px 0 rgba(244, 244, 246, 0.04) inset;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.btn-ghost:hover {
+  background: #2C2823;
+  border-color: rgba(245, 245, 247, 0.35);
+  color: #F5F5F7;
+}
+
+.btn-ghost:active {
+  transform: scale(0.97);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-danger {
+  background: rgba(185, 127, 112, 0.12);
+  color: #B97F70;
+  border: 1px solid rgba(185, 127, 112, 0.3);
+  transition: background-color 0.15s ease, transform 0.12s ease, border-color 0.15s ease;
+}
+
+.btn-danger:hover {
+  background: rgba(185, 127, 112, 0.2);
+  border-color: rgba(185, 127, 112, 0.5);
+}
+
+.btn-danger:active {
+  transform: scale(0.97);
+}
+
+/* ---- Premium fields ---- */
+.field {
+  background: rgba(12, 11, 10, 0.6);
+  border: 1px solid #272420;
+  box-shadow: 0 1px 0 rgba(244, 244, 246, 0.03) inset, 0 -1px 0 rgba(0, 0, 0, 0.3) inset;
+  color: #EDEDF2;
+  transition: border-color 0.15s ease, box-shadow 0.2s ease, background-color 0.15s ease;
+}
+
+.field::placeholder {
+  color: #71717B;
+  opacity: 1;
+}
+
+.field:hover {
+  border-color: #3A352D;
+}
+
+.field:focus-within,
+.field:focus {
+  border-color: rgba(245, 245, 247, 0.55);
+  box-shadow: 0 1px 0 rgba(244, 244, 246, 0.05) inset, 0 0 0 3px rgba(245, 245, 247, 0.14), 0 0 18px rgba(245, 245, 247, 0.1);
+  background: rgba(12, 11, 10, 0.85);
+  outline: none;
+}
+
+/* ---- Badges ---- */
+.badge-gold {
+  background: rgba(245, 245, 247, 0.12);
+  color: #FFFFFF;
+  border: 1px solid rgba(245, 245, 247, 0.3);
+}
+
+.badge-green {
+  background: rgba(140, 165, 138, 0.12);
+  color: #8CA58A;
+  border: 1px solid rgba(140, 165, 138, 0.28);
+}
+
+.badge-red {
+  background: rgba(185, 127, 112, 0.12);
+  color: #B97F70;
+  border: 1px solid rgba(185, 127, 112, 0.28);
+}
+
+.badge-yellow {
+  background: rgba(200, 168, 126, 0.12);
+  color: #C8A87E;
+  border: 1px solid rgba(200, 168, 126, 0.28);
+}
+
+.badge-muted {
+  background: rgba(132, 125, 112, 0.12);
+  color: #A8A8B3;
+  border: 1px solid rgba(132, 125, 112, 0.28);
+}
+
+/* ---- Skeleton shimmer ---- */
+.skel {
+  position: relative;
+  overflow: hidden;
+  background: #1F1C18;
+  border-radius: 6px;
+}
+
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(245, 245, 247, 0.09), transparent);
+  animation: shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ---- kbd ---- */
+.kbd {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 10px;
+  line-height: 1;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #1F1C18;
+  border: 1px solid #3A352D;
+  border-bottom-width: 2px;
+  color: #A8A8B3;
+  box-shadow: 0 1px 0 rgba(244, 244, 246, 0.04) inset;
+}
+
+/* ---- Card hover lift ---- */
+.card-hover {
+  transition: transform 0.18s ease, box-shadow 0.25s ease, border-color 0.18s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 245, 247, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(244, 244, 246, 0.06) inset;
+}
+
+/* Input styling */
+input, textarea {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #F5F5F7;
+  box-shadow: 0 0 0 3px rgba(245, 245, 247, 0.14);
+}
+
+/* Tab drag preview */
+[draggable="true"] {
+  user-select: none;
+}
+
+/* Private/incognito tab glow - champagne */
+.tab-private {
+  border-color: rgba(245, 245, 247, 0.28) !important;
+}
+
+/* Tab drop indicator - champagne gold */
+.tab-drop-left {
+  border-left: 2px solid #F5F5F7 !important;
+}
+
+.tab-drop-right {
+  border-right: 2px solid #F5F5F7 !important;
+}
+
+/* Smooth tab transitions */
+.tab-transition {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Tab loading bar animation */
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Tab open animation — заметный пружинный pop при создании вкладки */
+@keyframes tab-in {
+  0% { opacity: 0; transform: translateX(-16px) scale(0.9); filter: blur(3px); }
+  60% { opacity: 1; transform: translateX(2px) scale(1.015); filter: blur(0); }
+  100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
+}
+
+.animate-tab-in {
+  animation: tab-in 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Page/content enter animation — spring */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.animate-page-in {
+  animation: page-in 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Text selection - champagne gold */
+::selection {
+  background: rgba(245, 245, 247, 0.26);
+  color: #F5F5F7;
+}
+
+/* Content-visibility for long lists (bookmarks/history) */
+.cv-item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
+}
+
+/* Tab bar edge fade (signals scrollability) */
+.tabbar-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+}
+
+/* Subtle focus glow that pulses once when element gains focus */
+@keyframes focus-glow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(245, 245, 247, 0.14); }
+  50% { box-shadow: 0 0 0 3px rgba(245, 245, 247, 0.22), 0 0 12px rgba(245, 245, 247, 0.18); }
+}
+.focus-glow:focus-visible {
+  animation: focus-glow 0.4s ease-out;
+}
+
+/* Enhanced button: shimmer on hover for gold buttons */
+@keyframes btn-shimmer {
+  0% { background-position: 0 50%; }
+  50% { background-position: 100% 50%; }
+}
+.btn-gold {
+  background-image: linear-gradient(180deg, #FFFFFF 0%, #F5F5F7 100%);
+  background-size: 200% 200%;
+  transition: background-position 0.4s ease;
+}
+.btn-gold:hover {
+  animation: btn-shimmer 0.4s ease-out;
+}
+
+/* Card lift with gentle shadow expansion */
+@keyframes card-lift {
+  0%, 100% { transform: translateY(0); box-shadow: 0 1px 0 rgba(244, 244, 246, 0.03) inset, 0 4px 14px rgba(0, 0, 0, 0.35); }
+  50% { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(244, 244, 246, 0.05) inset, 0 6px 20px rgba(0, 0, 0, 0.42); }
+}
+.card-lift:hover {
+  animation: card-lift 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Tab hover highlight with subtle glow */
+@keyframes tab-glow {
+  0%, 100% { border-color: rgba(245, 245, 247, 0.28); box-shadow: 0 0 0 1px rgba(245, 245, 247, 0.12); }
+  50% { border-color: rgba(245, 245, 247, 0.45); box-shadow: 0 0 0 2px rgba(245, 245, 247, 0.18), 0 0 6px rgba(245, 245, 247, 0.1); }
+}
+.tab-glow:hover {
+  animation: tab-glow 0.3s ease-out;
+}
+
+/* Status dot: softer, slower pulse */
+@keyframes status-pulse-soft {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+.status-dot-soft {
+  animation: status-pulse-soft 3s ease-in-out infinite;
+}
+
+/* Loading spinner - champagne gold */
+@keyframes spin-gold {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.spin-gold {
+  animation: spin-gold 1s linear infinite;
+}
+
+/* Entrance stagger: card items rise from different offsets */
+@keyframes card-stagger-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card-stagger-in {
+  animation: card-stagger-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Hover ripple effect on glass panels */
+@keyframes ripple {
+  0% { opacity: 0; transform: scale(0); }
+  100% { opacity: 0.12; transform: scale(1.5); }
+}
+.ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(245, 245, 247, 0.18) 0%, transparent 70%);
+  opacity: 0;
+  animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Selection highlight pulse on double-tap */
+@keyframes selection-pulse {
+  0%, 100% { background: rgba(245, 245, 247, 0.26); }
+  50% { background: rgba(245, 245, 247, 0.38); }
+}
+.selection-pulse::selection {
+  animation: selection-pulse 0.7s ease-in-out;
+}
+
+/* Ambient subtle gradient shift — barely perceptible warmth */
+@keyframes ambient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+#root {
+  background:
+    radial-gradient(1100px 480px at 72% -8%, rgba(245, 245, 247, 0.055), transparent 62%),
+    radial-gradient(820px 520px at 8% 108%, rgba(245, 245, 247, 0.035), transparent 60%),
+    radial-gradient(600px 380px at 50% 50%, rgba(245, 245, 247, 0.01), transparent 70%),
+    #0A0A0C;
+  background-attachment: fixed;
+  animation: ambient-shift 20s ease-in-out infinite;
+}
+
+/* Item subtle bounce on active/press */
+@keyframes item-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.item-bounce:active {
+  animation: item-bounce 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Enhanced tab-in with scale easing */
+@keyframes tab-in-v2 {
+  from { opacity: 0; transform: translateX(-12px) scale(0.95); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+.animate-tab-in-v2 {
+  animation: tab-in-v2 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Glass panes subtle float */
+@keyframes glass-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.glass-float {
+  animation: glass-float 6s ease-in-out infinite;
+}
+
+/* Hover reveal slide */
+@keyframes reveal-slide {
+  from { transform: translateX(-4px); opacity: 0.8; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.reveal-slide:hover {
+  animation: reveal-slide 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Pulse badge on new activity */
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+.badge-pulse {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* ==========================
+   KINEMATIC EASING VARIABLES
+   ========================== */
+:root {
+  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-soft: cubic-bezier(0.44, 0.96, 0.56, 1);
+}
+
+/* ==========================
+   BUTTON MICRO-INTERACTIONS
+   ========================== */
+
+/* Buttons: soft hover lift + glow, springy press */
+.btn-activated {
+  transition: transform 0.12s var(--ease-spring), box-shadow 0.12s var(--ease-spring), background-color 0.15s ease;
+}
+.btn-activated:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(244, 244, 246, 0.3) inset;
+}
+.btn-activated:active {
+  transform: scale(0.96) translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(244, 244, 246, 0.2) inset;
+}
+
+/* Focus outline with breathing shadow */
+.focus-breathe:focus-visible {
+  outline: 2px solid rgba(245, 245, 247, 0.6);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(245, 245, 247, 0.14), 0 0 12px rgba(245, 245, 247, 0.18);
+  animation: focus-breathe 2s ease-in-out infinite;
+}
+@keyframes focus-breathe {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(245, 245, 247, 0.14), 0 0 12px rgba(245, 245, 247, 0.18); }
+  50% { box-shadow: 0 0 0 3px rgba(245, 245, 247, 0.22), 0 0 20px rgba(245, 245, 247, 0.25); }
+}
+
+/* ==========================
+   POPUP / TOOLTIP ENTRANCE
+   ========================== */
+.popup-enter {
+  visibility: visible;
+}
+.popup {
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0.95) translateY(4px);
+  transition: opacity 0.2s var(--ease-soft), transform 0.2s var(--ease-soft);
+}
+.popup.popup-open {
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* ==========================
+   TABS ACTIVE INDICATOR
+   ========================== */
+.tab-active {
+  position: relative;
+  background-color: rgba(245, 245, 247, 0.08);
+}
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #F5F5F7, transparent);
+  transform: scaleX(0);
+  transition: transform 0.2s var(--ease-apple);
+}
+.tab-active.tab-active::after {
+  transform: scaleX(1);
+}
+
+/* ==========================
+   REDUCED-MOTION: глушим только декоратив (входы/циклы/параллакс/VT),
+   рабочие микроинтеракции (ховеры, нажатия, переходы) оставляем живыми
+   ========================== */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in, .animate-tab-in, .animate-page-in, .pop-in, .sb-in, .card-stagger-in, .nt-wallpaper-fade, .focus-breathe {
+    animation-duration: 0.01s !important;
+  }
+  .card-lift, .tab-glow, .status-dot-soft, .spin-gold, .ripple::after, .selection-pulse::selection, .focus-glow, .btn-gold:hover > *, .item-bounce, .glass-float, .reveal-slide, .badge-pulse, .ambient-shift, .popup-open .popup, .tab-active::after, .nt-orb, .status-dot, .cursor-blink, .skel::after {
+    animation: none !important;
+  }
+  ::view-transition-group(section-panel),
+  ::view-transition-old(section-panel),
+  ::view-transition-new(section-panel) {
+    animation: none !important;
+  }
+}
+
+/* Ручной выключатель анимаций (Settings → Appearance → Animations) */
+.anim-off *, .anim-off *::before, .anim-off *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* ---- New Tab wallpapers (transform/opacity/filter animations only) ---- */
+.nt-wallpaper { position: absolute; inset: 0; pointer-events: none; }
+.nt-wallpaper-obsidian { background: radial-gradient(1100px 480px at 72% -8%, rgba(245,245,247,.06), transparent 62%), radial-gradient(820px 520px at 8% 108%, rgba(245,245,247,.038), transparent 60%); }
+.nt-wallpaper-ember { background: radial-gradient(900px 500px at 50% 110%, rgba(185,127,112,.16), transparent 60%), radial-gradient(700px 400px at 85% -10%, rgba(200,168,126,.1), transparent 60%), #160D0A; }
+.nt-wallpaper-abyss { background: radial-gradient(900px 520px at 50% -10%, rgba(91,122,153,.17), transparent 62%), radial-gradient(700px 420px at 10% 110%, rgba(91,122,153,.09), transparent 60%), #0A0F16; }
+.nt-wallpaper-dune { background: radial-gradient(1000px 480px at 50% 115%, rgba(200,168,126,.15), transparent 62%), radial-gradient(600px 380px at 90% 0%, rgba(245,245,247,.08), transparent 60%), #131009; }
+.nt-wallpaper-nebula { background: radial-gradient(800px 480px at 20% 0%, rgba(167,155,178,.15), transparent 60%), radial-gradient(800px 520px at 85% 100%, rgba(91,122,153,.12), transparent 60%), #0E0C14; }
+.nt-wallpaper-custom { background-color: #0A0A0C; }
+@keyframes nt-fade { from { opacity: 0; } to { opacity: 1; } }
+.nt-wallpaper-fade { animation: nt-fade .5s ease-out both; }
+@keyframes nt-orb { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(0,-16px,0) scale(1.04); } }
+.nt-orb { animation: nt-orb 9s ease-in-out infinite; }
+
+/* Sidebar entrance: slide from left + fade, transform released after (hover stays alive) */
+@keyframes sb-in {
+  from { opacity: 0; transform: translateX(-10px) scale(0.85); }
+  to { opacity: 1; }
+}
+
+.sb-in {
+  animation: sb-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ViewTransition переключения разделов — именованная группа.
+   Направление задаёт addTransitionType: sec-fwd (вниз по меню, слайд слева),
+   sec-back (вверх, зеркально). Без типа — дефолт sec-fwd. */
+::view-transition-group(section-panel) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::view-transition-old(section-panel) {
+  animation-name: sec-vt-out;
+  animation-duration: 220ms;
+  animation-timing-function: ease-in;
+}
+
+::view-transition-new(section-panel) {
+  animation-name: sec-vt-in;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes sec-vt-in {
+  from { opacity: 0; transform: translateX(var(--vt-in-x, -22px)) scale(0.995); }
+}
+
+@keyframes sec-vt-out {
+  to { opacity: 0; transform: translateX(var(--vt-out-x, 14px)) scale(0.998); }
+}
+
+html:active-view-transition-type(sec-back) {
+  --vt-in-x: 22px;
+  --vt-out-x: -14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(section-panel),
+  ::view-transition-old(section-panel),
+  ::view-transition-new(section-panel) {
+    animation: none;
+  }
+}
+
+/* Webview styles */
+webview {
+  border: none;
+  outline: none;
+}
+webview {
+  border: none;
+  outline: none;
+}
+
+/* ── Network Graph (React Flow dark-theme overrides) ── */
+.netgraph-edge-active {
+  stroke-dasharray: 6 4;
+  animation: netgraph-dash 0.8s linear infinite;
+}
+
+@keyframes netgraph-dash {
+  to { stroke-dashoffset: -10; }
+}
+
+.netgraph-canvas .react-flow__background {
+  opacity: 0.5;
+}
+
+.netgraph-canvas .react-flow__controls {
+  background: #171512;
+  border: 1px solid #272420;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.netgraph-canvas .react-flow__controls-button {
+  background: #171512;
+  border-bottom: 1px solid #272420;
+  fill: #847d70;
+}
+
+.netgraph-canvas .react-flow__controls-button:hover {
+  background: #221f1b;
+  fill: #f5f5f7;
+}
+
+.netgraph-canvas .react-flow__minimap {
+  background: #141210 !important;
+  border: 1px solid #272420;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.netgraph-canvas .react-flow__attribution {
+  background: transparent;
+  color: #847d70;
+  font-size: 9px;
+}
+
+.netgraph-canvas .react-flow__attribution a {
+  color: #a89776;
+}
+
+.netgraph-canvas .react-flow__node:focus {
+  outline: none;
+}
+
+.netgraph-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.netgraph-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.netgraph-scroll::-webkit-scrollbar-thumb {
+  background: #2c2823;
+  border-radius: 4px;
+}
+
+.netgraph-scroll::-webkit-scrollbar-thumb:hover {
+  background: #3a352d;
+}

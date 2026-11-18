@@ -1,0 +1,85 @@
+.startup-splash {
+  background: #0A0A0C;
+}
+
+.startup-splash__bloom {
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 42%,
+    rgba(245, 245, 247, 0.13) 0%,
+    rgba(245, 245, 247, 0.05) 45%,
+    transparent 70%
+  );
+  will-change: opacity, transform;
+  animation: splash-bloom 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes splash-bloom {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.startup-splash__logo {
+  will-change: opacity, transform;
+  animation: splash-logo-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  filter: drop-shadow(0 0 32px rgba(245, 245, 247, 0.22));
+}
+
+@keyframes splash-logo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.startup-splash__track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.startup-splash__fill {
+  background: linear-gradient(90deg, #71717B, #F5F5F7, #FFFFFF);
+  transform-origin: left center;
+  will-change: transform;
+  transition: transform 0.5s ease;
+}
+
+.startup-splash__shimmer {
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 80%
+  );
+  will-change: transform;
+  animation: splash-shimmer 1.8s linear infinite;
+}
+
+@keyframes splash-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+.startup-splash__status {
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startup-splash__bloom,
+  .startup-splash__logo,
+  .startup-splash__shimmer {
+    animation: none;
+  }
+}

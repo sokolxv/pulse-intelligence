@@ -1,0 +1,122 @@
+{
+  "name": "pulse-browser",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Pulse - OSINT & Pentest Browser by Sokolxv Team",
+  "author": "Sokolxv Team",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.12.0",
+    "framer-motion": "^11.18.2",
+    "lucide-react": "^1.44.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "electron": "^44.3.0",
+    "electron-builder": "^24.9.1",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "vitest": "^3.2.7",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.pulse.browser",
+    "productName": "Pulse Browser",
+    "copyright": "Copyright © 2026 Sokolxv Team",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "Tor Browser/Browser/TorBrowser/Tor/tor.exe",
+        "to": "privacy/tor.exe",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "Tor Browser/Browser/TorBrowser/Data/Tor/geoip",
+        "to": "privacy/geoip"
+      },
+      {
+        "from": "Tor Browser/Browser/TorBrowser/Data/Tor/geoip6",
+        "to": "privacy/geoip6"
+      }
+    ],
+    "directories": {
+      "output": "release3"
+    },
+    "asar": true,
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Pulse-Browser-${version}-${arch}.${ext}"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Network",
+      "maintainer": "Sokolxv Team",
+      "artifactName": "Pulse-Browser-${version}-${arch}.${ext}",
+      "desktop": {
+        "Name": "Pulse Browser",
+        "Comment": "OSINT & Pentest Browser",
+        "Categories": "Network;Security;"
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Pulse Browser"
+    }
+  }
+}

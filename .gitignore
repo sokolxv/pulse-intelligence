@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+release/
+release2/
+release3/
+
+# Electron Builder staging
+build/*.exe
+
+# Local runtime files (Tor Browser binaries are not distributed via git —
+# download Tor Browser locally and copy tor.exe / geoip before building)
+Tor Browser/
+
+# Local dev / AI context
+.freebuff/
+CONTEXT.md
+README_FOR_CLAUDE.md
+
+# Local env & secrets
+.env
+.env.*
+!.env.example
+
+# OS artifacts
+.DS_Store
+Thumbs.db
